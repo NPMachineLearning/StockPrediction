@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_secret
+      MYSQL_DATABASE: stocks
+    ports:
+      - 3306:3306
+    secrets:
+      - mysql_secret
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8000:8080
+secrets:
+  mysql_secret:
+    file: ./secrets/mysql_secret.txt
