@@ -8,12 +8,13 @@ Original file is located at
 """
 
 from utils.utils import setup_logging
-from ingestor.stocks_ingestor import ingest_stocks
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
+from utils.stock_utils import train_model, ingest_stocks, prepare_data_for_training
 from utils.mysql_utils import read_dataframe_from_table
-from sklearn.ensemble import RandomForestRegressor
+import logging
+import time
 
 def setup():
   if not os.path.exists("./logs"):
@@ -21,45 +22,28 @@ def setup():
 
   setup_logging("./logs/stock_processor.log")
 
-def train_model(stock_symbols, window=7):
-  try:
-    for stock in stock_symbols:
-      stock_df = read_dataframe_from_table(stock)
-
-      # get stock Close values
-      data = stock_df[["Close"]]
-
-      # rename to Price
-      data = data.rename(columns={"Close": "Price"})
-
-      # mean of a period(window) for training 
-      data["Period"] = data["Price"].rolling(window).mean()
-      data = data.dropna()
-      
-      # Shift Price back 1 row since we are predicting
-      # 1 future day by a period(window)
-      data = data.assign(Price=data["Price"].shift(-1))
-      data = data.dropna()
-
-      # prepare X, y training and target data
-      X = data[["Period"]].to_numpy()
-      y = data["Price"]
-
-      # train model
-      model = RandomForestRegressor()
-      model.fit(X, y)
-
-      # model score
-      print(model.score(X, y))
-  except Exception as err:
-    print(err)
-
 if __name__ == "__main__":
   setup()
   stocks = ["BTC-USD", "GC=F"]
   print(ingest_stocks(stock_symbols=stocks))
-  train_model(stocks)
+  try:
+    stock_symbol = stocks[1]
+    
+    logging.info(f"Prepare {stock_symbol} stock data for model training")
+    stock_df = read_dataframe_from_table(stock_symbol)
+    X, y = prepare_data_for_training(stock_df=stock_df,
+                                     window=7,
+                                     target_colum_name="Close")
+    logging.info(f"Prepare {stock_symbol} stock data for model training completed")
 
+    logging.info(f"Training model ......")
+    t1 = time.time()
+    train_model(X=X, y=y)
+    t2 = time.time()
+    logging.info(f"Training model completed")
+    logging.info(f"Training time -> {t2-t1} seconds")
+  except Exception as err:
+    print(err)
 
 
 # data = stock_data[["Close"]]
