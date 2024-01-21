@@ -69,8 +69,7 @@ def create_table_from_dataframe(dataframe, table_name) -> bool:
     connection = init_SQLAlchemy_connection()
     return dataframe.to_sql(name=table_name, 
                             con=connection, 
-                            if_exists='replace',
-                            index_label="id")
+                            if_exists='replace')
 
 def read_dataframe_from_table(table_name) -> pd.DataFrame:
     connection = init_SQLAlchemy_connection()
