@@ -73,8 +73,8 @@ def create_table_from_dataframe(dataframe, table_name) -> bool:
 
 def read_dataframe_from_table(table_name) -> pd.DataFrame:
     connection = init_SQLAlchemy_connection()
-    cmd = f"select * from {table_name}"
-    df = pd.read_sql(cmd, con=connection)
+    cmd = f"SELECT * FROM `{table_name}`"
+    df = pd.read_sql(sql=cmd, con=connection)
     return df
 
 

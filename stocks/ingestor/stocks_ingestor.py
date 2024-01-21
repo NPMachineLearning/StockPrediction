@@ -13,21 +13,21 @@ def ingest_stocks(stock_symbols:list):
 
   db = init_db()
 
-  for symbol in stock_symbols:
+  for stock in stock_symbols:
     try:
-      logging.info(f"Downloading {symbol} stock data .....")
-      stock_data = get_stock_data(symbol)
+      logging.info(f"Downloading {stock} stock data .....")
+      stock_data = get_stock_data(stock)
       stock_data.index = convert_to_date(stock_data.index)
       stock_data = stock_data.rename_axis("Date", axis=0)
-      logging.info(f"Downloading {symbol} stock data completed")
+      logging.info(f"Downloading {stock} stock data completed")
 
-      logging.info(f"Writting {symbol} data into database .....")
-      create_table_from_dataframe(stock_data, symbol)
-      logging.info(f"Writting {symbol} data into database completed")
-      list_successful.append(symbol)
+      logging.info(f"Writting {stock} data into database .....")
+      create_table_from_dataframe(stock_data, stock)
+      logging.info(f"Writting {stock} data into database completed")
+      list_successful.append(stock)
     except Exception as err:
       logging.error(err)
-      list_fail.append(symbol)
+      list_fail.append(stock)
 
   db.close()
   
