@@ -1,9 +1,7 @@
 import yfinance as yf
 from utils.mysql_utils import read_dataframe_from_table, create_table_from_dataframe
 from sklearn.ensemble import RandomForestRegressor
-import logging
 import pandas as pd
-import time
 
 def get_stock_data(stock_symbol:str, period="max"):
     stock = yf.Ticker(stock_symbol)
@@ -16,28 +14,18 @@ def get_stock_data(stock_symbol:str, period="max"):
 def convert_to_date(datetime):
   return pd.to_datetime(datetime).date
 
-def ingest_stocks(stock_symbols:list):
-  list_successful = []
-  list_fail = []
+def download_stock(stock_symbol):
+  try:
+    # get original stock data
+    stock_data = get_stock_data(stock_symbol)
+    # convert original index(Date) to new column
+    stock_data.insert(0, "Date", convert_to_date(stock_data.index))
+    # reset index
+    stock_data = stock_data.reset_index(drop=True)
 
-  for stock in stock_symbols:
-    try:
-      logging.info(f"Downloading {stock} stock data .....")
-      stock_data = get_stock_data(stock)
-      stock_data.index = convert_to_date(stock_data.index)
-      stock_data = stock_data.rename_axis("Date", axis=0)
-      logging.info(f"Downloading {stock} stock data completed")
-
-      logging.info(f"Writting {stock} data into database .....")
-      create_table_from_dataframe(stock_data, stock)
-      logging.info(f"Writting {stock} data into database completed")
-      list_successful.append(stock)
-    except Exception as err:
-      logging.error(err)
-      list_fail.append(stock)
-  
-  return {"successful": list_successful,
-          "fail": list_fail} 
+    return stock_data
+  except:
+     raise RuntimeError(f"Unable to download {stock_symbol} data")
 
 def prepare_data_for_training(stock_df, window=7, target_colum_name="Close"):
    # get stock Close values
