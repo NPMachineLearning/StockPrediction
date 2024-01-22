@@ -3,6 +3,7 @@ version: "3.8"
 services:
   db:
     image: mysql
+    container_name: stock_db
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_secret
@@ -14,21 +15,18 @@ services:
 
   adminer:
     image: adminer
+    container_name: db_ui
     restart: always
     ports:
       - 8000:8080
 
   stocks:
     image: stocks_processor
+    container_name: stock
     build: ./stocks
     env_file:
-      - docker.env
-    # variables's value extract from .env file in stocks folder
-    environment:
-      - HOST=${HOST}
-      - USER=${USER}
-      - PASSWORD=${PASSWORD}
-      - DATABASE=${DATABASE}
+      # env variables's value extracted from docker-db.env file in stocks folder
+      - docker-db.env
     depends_on:
       - db
       - adminer
