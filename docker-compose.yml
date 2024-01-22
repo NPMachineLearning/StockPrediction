@@ -17,6 +17,22 @@ services:
     restart: always
     ports:
       - 8000:8080
+
+  stocks:
+    image: stocks_processor
+    build: ./stocks
+    env_file:
+      - docker.env
+    # variables's value extract from .env file in stocks folder
+    environment:
+      - HOST=${HOST}
+      - USER=${USER}
+      - PASSWORD=${PASSWORD}
+      - DATABASE=${DATABASE}
+    depends_on:
+      - db
+      - adminer
+
 secrets:
   mysql_secret:
     file: ./secrets/mysql_secret.txt

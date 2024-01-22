@@ -2,27 +2,29 @@ import mysql.connector as dbconnector
 from sqlalchemy import create_engine
 import pandas as pd
 import datetime
+import os
+from dotenv import load_dotenv
 
+def get_db_env():
+    load_dotenv()
+    env = {
+        "host": os.environ["HOST"],
+        "user": os.environ["USER"], 
+        "password": os.environ["PASSWORD"], 
+        "database": os.environ["DATABASE"],  
+    }
+    
+    return env
 
-def init_db(host="localhost",
-            user="root",
-            password="mysql-password",
-            database="stocks") -> dbconnector.MySQLConnection:
-    global HOST
-    global USER
-    global PASSWORD
-    global DATABASE
+def init_db() -> dbconnector.MySQLConnection:
 
-    HOST = host
-    USER = user
-    PASSWORD = password
-    DATABASE = database
+    config = get_db_env()
 
     connected_db = dbconnector.connect(
-        host=host,
-        user=user,
-        password=password,
-        database=database
+        host=config["host"],
+        user=config["user"],
+        password=config["password"],
+        database=config["database"]
     )
     return connected_db
 
@@ -57,10 +59,13 @@ def remove_table(cursor, table_name) -> bool:
     
     return False
 
-def init_SQLAlchemy_connection(host="localhost",
-                           user="root",
-                           password="mysql-password",
-                           database="stocks"):
+def init_SQLAlchemy_connection():
+    config = get_db_env()
+    host=config["host"]
+    user=config["user"]
+    password=config["password"]
+    database=config["database"]
+
     url = f"mysql+mysqlconnector://{user}:{password}@{host}/{database}"
     engine = create_engine(url)
     return engine
