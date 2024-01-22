@@ -8,7 +8,6 @@ Original file is located at
 """
 
 from utils.utils import setup_logging
-import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import os
