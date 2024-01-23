@@ -1,0 +1,6 @@
+# Make sure this file is LF for end of line sequence
+# Make sure this file has a blank line at end of file
+# Must use absolute path to python interpreter to run python file
+# otherwise cause error module not found
+# run job every day at 19:00:00
+0 19 * * * /usr/local/bin/python3 /stocks/stock_processor.py > /proc/1/fd/1 2>/proc/1/fd/2

@@ -1,9 +1,18 @@
-FROM ubuntu:22.04
-ADD ./utils /stocks/utils
-COPY ./stock_processor.py /stocks
-COPY ./requirements.txt /stocks
-RUN apt update
-RUN apt install -y python3-pip
-RUN apt install -y python3
-RUN pip install -r /stocks/requirements.txt
-CMD python3 /stocks/stock_processor.py
+FROM python:3.9.18-slim
+WORKDIR /stocks
+ADD ./utils utils
+COPY ./stock_processor.py .
+COPY ./requirements.txt .
+COPY ./.env .
+COPY ./run.sh .
+COPY ./stock_cronjob .
+# update container system
+RUN apt-get update
+# install cron
+RUN apt-get install -y cron
+# install modules
+RUN pip3 install -r requirements.txt
+# make sure cronjob can be runned
+RUN chmod 0644 stock_cronjob
+# run bash shell
+ENTRYPOINT [ "./run.sh" ]

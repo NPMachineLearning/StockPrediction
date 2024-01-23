@@ -6,8 +6,14 @@ services:
     container_name: stock_db
     restart: always
     environment:
+      # use secret file for password
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_secret
       MYSQL_DATABASE: stocks
+    # stocks service rely on this health check
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
     ports:
       - 3306:3306
     secrets:
@@ -21,16 +27,15 @@ services:
       - 8000:8080
 
   stocks:
-    image: stocks_processor
-    container_name: stock
+    image: stocks
+    container_name: stocks
+    restart: always
     build: ./stocks
-    env_file:
-      # env variables's value extracted from docker-db.env file in stocks folder
-      - docker-db.env
     depends_on:
-      - db
-      - adminer
+      db:
+        condition: service_healthy
 
 secrets:
   mysql_secret:
+    # copy mysql password to container
     file: ./secrets/mysql_secret.txt
