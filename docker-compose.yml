@@ -25,26 +25,65 @@ services:
 
   adminer:
     image: adminer
-    container_name: db_ui
+    container_name: mysql_db_ui
     restart: always
     ports:
       - 8000:8080
 
-  stocks:
-    image: stocks
-    container_name: stocks
+  mongo:
+    image: mongo
+    container_name: mongo_db
     restart: always
-    build: ./stocks
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: stock_config
+    secrets:
+      - mongo_root_secret
+      - mongo_password_secret
+    ports:
+      - 27017:27017
+    volumes:
+      # see volumes below
+      - confg-db-data:/data/db
+
+  mongo_express:
+    image: mongo-express
+    container_name: mongo_db_ui
+    restart: always
+    ports:
+      - 8001:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+    secrets:
+      - mongo_root_secret
+      - mongo_password_secret
     depends_on:
-      db:
-        condition: service_healthy
+      - mongo
+
+  # stocks:
+  #   image: stocks
+  #   container_name: stocks
+  #   restart: always
+  #   build: ./stocks
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
 
 secrets:
   mysql_secret:
     # copy mysql password to container
     file: ./secrets/mysql_secret.txt
+  mongo_root_secret:
+    file: ./secrets/mongo_root_secret.txt
+  mongo_password_secret:
+    file: ./secrets/mongo_password_secret.txt
 
 volumes:
   # create a volume for mysql database
   db-data:
     name: stock_db_storage
+  confg-db-data:
+    name: mongo_db_storage
