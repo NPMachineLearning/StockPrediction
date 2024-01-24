@@ -18,6 +18,10 @@ services:
       - 3306:3306
     secrets:
       - mysql_secret
+    # according to offical data storage
+    volumes:
+      # see volumes below
+      - db-data:/var/lib/mysql
 
   adminer:
     image: adminer
@@ -39,3 +43,8 @@ secrets:
   mysql_secret:
     # copy mysql password to container
     file: ./secrets/mysql_secret.txt
+
+volumes:
+  # create a volume for mysql database
+  db-data:
+    name: stock_db_storage

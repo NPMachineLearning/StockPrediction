@@ -120,7 +120,6 @@ if __name__ == "__main__":
       logging.info(f"Writing stock and forecast data into database completed")
 
       logging.info(f"----------- Processing {stock_symbol} stock completed -----------")
-      logging.info("\n")
   except Exception as err:
     logging.error(err)
     print(err)
