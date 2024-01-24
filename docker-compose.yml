@@ -66,6 +66,15 @@ services:
       mysql_db:
         condition: service_healthy
 
+  stocks:
+    image: stocks
+    container_name: stocks
+    restart: always
+    build: ./stocks
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+
 secrets:
   mysql_root_pass_secret:
     # copy mysql password to container
