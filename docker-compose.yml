@@ -1,13 +1,13 @@
 version: "3.8"
 
 services:
-  db:
+  mysql_db:
     image: mysql
     container_name: stock_db
     restart: always
     environment:
       # use secret file for password
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_secret
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_pass_secret
       MYSQL_DATABASE: stocks
     # stocks service rely on this health check
     healthcheck:
@@ -17,7 +17,8 @@ services:
     ports:
       - 3306:3306
     secrets:
-      - mysql_secret
+      # see secrets below
+      - mysql_root_pass_secret
     # according to offical data storage
     volumes:
       # see volumes below
@@ -36,13 +37,13 @@ services:
     restart: always
     build: ./stocks
     depends_on:
-      db:
+      mysql_db:
         condition: service_healthy
 
 secrets:
-  mysql_secret:
+  mysql_root_pass_secret:
     # copy mysql password to container
-    file: ./secrets/mysql_secret.txt
+    file: ./secrets/mysql_root_password.txt
 
 volumes:
   # create a volume for mysql database
