@@ -25,13 +25,13 @@ Number of services will start when docker-compose is up.
 
 ## Root directory
 
-- [mongodb/](.\stock_predictions\mongodb)
-- [secrets/](.\stock_predictions\secrets)
-- [stocks/](.\stock_predictions\stocks)
-- [.env](.\stock_predictions.env)
-- [.gitignore](.\stock_predictions.gitignore)
-- [docker-compose.yml](.\stock_predictions\docker-compose.yml)
-- [ReadMe.md](.\stock_predictions\ReadMe.md)
+- [mongodb/](./stock_predictions/mongodb)
+- [secrets/](./stock_predictions/secrets)
+- [stocks/](./stock_predictions/stocks)
+- [.env](./stock_predictions.env)
+- [.gitignore](./stock_predictions.gitignore)
+- [docker-compose.yml](./stock_predictions/docker-compose.yml)
+- [ReadMe.md](./stock_predictions/ReadMe.md)
 
 * **stock_predictions/**: The project root.
 * **mongodb**: Mongo database for docker.
@@ -44,8 +44,8 @@ Number of services will start when docker-compose is up.
 
 This database is only for store configurations such as size of window to be used for machine learning to learn to make stock prediction. Store symbol of which stock will be processed.
 
-- [Dockerfile](.\mongodb\Dockerfile)
-- [init_stock_config.js](.\mongodb\init_stock_config.js)
+- [Dockerfile](./mongodb/Dockerfile)
+- [init_stock_config.js](./mongodb/init_stock_config.js)
 
 * **Dockerfile**: To build mongodb docker service on top of [mongo docker image](https://hub.docker.com/_/mongo). Doing so is because we want to create a collection with configuration files in database when container started.
 * **init_stock_config.js**: This javascript file will be used and called when mongodb started. And is where we write script to create a collection with files. [How is this work?](https://hub.docker.com/_/mongo) look at section **Initializing a fresh instance**.
@@ -54,19 +54,19 @@ This database is only for store configurations such as size of window to be used
 
 This is a scheduled service that will run by itself in interval. The main purpose of this service is to download required stock data from Yahoo financial and make stock prediction. In addtion to store data into database.
 
-- [utils/](.\stocks\utils)
-  - [db_env_utils.py](.\stocks\utils\db_env_utils.py)
-  - [mongo_utils.py](.\stocks\utils\mongo_utils.py)
-  - [mysql_utils.py](.\stocks\utils\mysql_utils.py)
-  - [stock_utils.py](.\stocks\utils\stock_utils.py)
-  - [utils.py](.\stocks\utils\utils.py)
-  - [\_\_init\_\_.py](.\stocks\utils__init__.py)
-- [.env](.\stocks.env)
-- [Dockerfile](.\stocks\Dockerfile)
-- [requirements.txt](.\stocks\requirements.txt)
-- [run.sh](.\stocks\run.sh)
-- [stock_cronjob](.\stocks\stock_cronjob)
-- [stock_processor.py](.\stocks\stock_processor.py)
+- [utils/](./stocks/utils)
+  - [db_env_utils.py](./stocks/utils/db_env_utils.py)
+  - [mongo_utils.py](./stocks/utils/mongo_utils.py)
+  - [mysql_utils.py](./stocks/utils/mysql_utils.py)
+  - [stock_utils.py](./stocks/utils/stock_utils.py)
+  - [utils.py](./stocks/utils/utils.py)
+  - [\_\_init\_\_.py](./stocks/utils__init__.py)
+- [.env](./stocks.env)
+- [Dockerfile](./stocks/Dockerfile)
+- [requirements.txt](./stocks/requirements.txt)
+- [run.sh](./stocks/run.sh)
+- [stock_cronjob](./stocks/stock_cronjob)
+- [stock_processor.py](./stocks/stock_processor.py)
 
 * **Utils**: Folder contain all helper functions that will be used in **stock_processor.py**.
 * **.env**: Environment variables that will be used for connecting to database.
