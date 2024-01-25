@@ -3,7 +3,7 @@ version: "3.8"
 services:
   mysql_db:
     image: mysql
-    container_name: stock_db
+    container_name: mysql_db
     restart: always
     environment:
       # use secret file for password
@@ -22,7 +22,7 @@ services:
     # according to offical data storage
     volumes:
       # see volumes below
-      - db-data:/var/lib/mysql
+      - mysql-db-volume:/var/lib/mysql
 
   adminer:
     image: adminer
@@ -33,7 +33,7 @@ services:
 
   mongo:
     build: ./mongodb
-    image: stock_mongo
+    image: mongo_db
     container_name: mongo_db
     restart: always
     environment:
@@ -47,8 +47,8 @@ services:
       - 27017:27017
     volumes:
       # see volumes below
-      - confg-db-data:/data/db
-      - confg-db-data:/data/configdb
+      - mongo-db-volume:/data/db
+      - mongo-db-volume:/data/configdb
 
   mongo_express:
     image: mongo-express
@@ -57,8 +57,8 @@ services:
     ports:
       - 8001:8081
     environment:
-      ME_CONFIG_BASICAUTH_USERNAME: ${EXPRESS_USER}
-      ME_CONFIG_BASICAUTH_PASSWORD: ${EXPRESS_PASSWORD}
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_USER}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD}
       ME_CONFIG_MONGODB_ADMINUSERNAME_FILE: /run/secrets/mongo_root_secret
       ME_CONFIG_MONGODB_ADMINPASSWORD_FILE: /run/secrets/mongo_password_secret
       ME_CONFIG_MONGODB_SERVER: mongo
@@ -71,14 +71,14 @@ services:
       mysql_db:
         condition: service_healthy
 
-  # stocks:
-  #   image: stocks
-  #   container_name: stocks
-  #   restart: always
-  #   build: ./stocks
-  #   depends_on:
-  #     mysql_db:
-  #       condition: service_healthy
+  stocks:
+    image: stock_manager
+    container_name: stock_manager
+    restart: always
+    build: ./stocks
+    depends_on:
+      mysql_db:
+        condition: service_healthy
 
 secrets:
   mysql_root_pass_secret:
@@ -95,7 +95,7 @@ secrets:
 
 volumes:
   # create a volume for mysql database
-  db-data:
-    name: stock_db_storage
-  confg-db-data:
+  mysql-db-volume:
+    name: stock_manager_db_storage
+  mongo-db-volume:
     name: mongo_db_storage

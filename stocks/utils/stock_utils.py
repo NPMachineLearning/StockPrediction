@@ -1,5 +1,4 @@
 import yfinance as yf
-from utils.mysql_utils import read_dataframe_from_table, create_table_from_dataframe
 from sklearn.ensemble import RandomForestRegressor
 import pandas as pd
 

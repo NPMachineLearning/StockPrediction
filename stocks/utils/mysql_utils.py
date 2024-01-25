@@ -2,23 +2,11 @@ import mysql.connector as dbconnector
 from sqlalchemy import create_engine
 import pandas as pd
 import datetime
-import os
-from dotenv import load_dotenv
-
-def get_db_env():
-    load_dotenv()
-    env = {
-        "host": os.environ["HOST"],
-        "user": os.environ["USER"], 
-        "password": os.environ["PASSWORD"], 
-        "database": os.environ["DATABASE"],  
-    }
-    
-    return env
+from utils.db_env_utils import get_msql_db_env
 
 def init_db() -> dbconnector.MySQLConnection:
 
-    config = get_db_env()
+    config = get_msql_db_env()
 
     connected_db = dbconnector.connect(
         host=config["host"],
@@ -60,7 +48,7 @@ def remove_table(cursor, table_name) -> bool:
     return False
 
 def init_SQLAlchemy_connection():
-    config = get_db_env()
+    config = get_msql_db_env()
     host=config["host"]
     user=config["user"]
     password=config["password"]

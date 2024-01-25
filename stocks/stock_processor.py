@@ -13,6 +13,7 @@ import numpy as np
 import os
 from utils.stock_utils import train_model, prepare_data_for_training, download_stock
 from utils.mysql_utils import create_table_from_dataframe
+from utils.mongo_utils import get_database
 import logging
 import time
 import datetime
@@ -39,13 +40,16 @@ def make_stock_forcast(model, x, window=7):
 
 if __name__ == "__main__":
   setup()
-  stocks = ["BTC-USD", "GC=F"]
-  
+  # stocks = ["BTC-USD", "GC=F"]
+  mongo_db = get_database()
+  stocks = mongo_db["stocks"].find_one()["stock_symbols"]
+  # window size of data
+  # for training model
+  # window = 7
+  window = mongo_db["config"].find_one()["window"]
+
   try:
     for stock_symbol in stocks:
-      # window size of data
-      # for training model
-      window = 7
 
       logging.info(f"----------- Processing {stock_symbol} stock -----------")
 
