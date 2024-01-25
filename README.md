@@ -1,14 +1,10 @@
 # Stock Prediction
 
----
-
 The purpose of this project is to grab Yahoo's financial stocks' data and then use meachine learning to make prediction for stocks. Store stock data and prediction in database.
 
 The project is docker based and each services are containerized.
 
 # How to start service
-
----
 
 1. Make sure docker is installed.
 2. Open terminal and go to project root directory.
@@ -16,8 +12,6 @@ The project is docker based and each services are containerized.
 4. Run command `docker-compose down` if in dettach mode or **control key + C** to exit in none dettach mode.
 
 # Docker services
-
----
 
 Number of services will start when docker-compose is up.
 
@@ -29,11 +23,7 @@ Number of services will start when docker-compose is up.
 
 # File structure
 
----
-
 ## Root directory
-
----
 
 - [mongodb/](.\stock_predictions\mongodb)
 - [secrets/](.\stock_predictions\secrets)
@@ -52,8 +42,6 @@ Number of services will start when docker-compose is up.
 
 ## mongodb directory
 
----
-
 This database is only for store configurations such as size of window to be used for machine learning to learn to make stock prediction. Store symbol of which stock will be processed.
 
 - [Dockerfile](.\mongodb\Dockerfile)
@@ -63,8 +51,6 @@ This database is only for store configurations such as size of window to be used
 * **init_stock_config.js**: This javascript file will be used and called when mongodb started. And is where we write script to create a collection with files. [How is this work?](https://hub.docker.com/_/mongo) look at section **Initializing a fresh instance**.
 
 ## stocks directory
-
----
 
 This is a scheduled service that will run by itself in interval. The main purpose of this service is to download required stock data from Yahoo financial and make stock prediction. In addtion to store data into database.
 
