@@ -60,7 +60,7 @@ This is a scheduled service that will run by itself in interval. The main purpos
   - [mysql_utils.py](./stocks/utils/mysql_utils.py)
   - [stock_utils.py](./stocks/utils/stock_utils.py)
   - [utils.py](./stocks/utils/utils.py)
-  - [\_\_init\_\_.py](./stocks/utils__init__.py)
+  - [\_\_init\_\_.py](./stocks/utils/__init__.py)
 - [.env](./stocks.env)
 - [Dockerfile](./stocks/Dockerfile)
 - [requirements.txt](./stocks/requirements.txt)
