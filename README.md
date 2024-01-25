@@ -37,7 +37,7 @@ Number of services will start when docker-compose is up.
 * **mongodb**: Mongo database for docker.
 * **secrets**: Not in github but [here(private)](https://drive.google.com/drive/folders/16ypKrONqN92Ub2SW16mLsxj5S7-AXb74?usp=drive_link). Contain all docker secrets such as root user or password senstive information.
 * **stocks**: A docker service for processing stock data with cronjob.
-* **.env**: Environment variables for docker.
+* **.env**: Environment variables for docker. Not in github but [here private](https://drive.google.com/drive/folders/1mVx5V6MY63XcXhwM3f7BMqq2vVz0WKeB?usp=drive_link).
 * **docker-compose.yml**: YAML file for docker compose.
 
 ## mongodb directory
@@ -69,7 +69,7 @@ This is a scheduled service that will run by itself in interval. The main purpos
 - [stock_processor.py](./stocks/stock_processor.py)
 
 * **Utils**: Folder contain all helper functions that will be used in **stock_processor.py**.
-* **.env**: Environment variables that will be used for connecting to database.
+* **.env**: Environment variables that will be used for connecting to database. Not in github but [here private](https://drive.google.com/drive/folders/1CGb2c82Hi-jSXy8Hi7Up9IDbfrRK0OWc?usp=drive_link).
 * **Dockerfile**: Customzied docker service that build on top of [Python image](https://hub.docker.com/_/python).
 * **requirements.txt**: File that pip will use to install required python modules.
 * **run.sh**: Bash shell to schedule cronjob, run cronjob at foreground and run **stock_processor.py** once.
