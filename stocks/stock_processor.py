@@ -39,16 +39,15 @@ def make_stock_forcast(model, x, window=7):
   return forecasts
 
 if __name__ == "__main__":
-  setup()
-  # stocks = ["BTC-USD", "GC=F"]
-  mongo_db = get_database()
-  stocks = mongo_db["stocks"].find_one()["stock_symbols"]
-  # window size of data
-  # for training model
-  # window = 7
-  window = mongo_db["config"].find_one()["window"]
-
   try:
+    setup()
+    # stocks = ["BTC-USD", "GC=F"]
+    mongo_db = get_database()
+    stocks = mongo_db["stocks"].find_one()["stock_symbols"]
+    # window size of data
+    # for training model
+    # window = 7
+    window = mongo_db["config"].find_one()["window"]
     for stock_symbol in stocks:
 
       logging.info(f"----------- Processing {stock_symbol} stock -----------")
