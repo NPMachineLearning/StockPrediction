@@ -30,6 +30,9 @@ services:
     restart: always
     ports:
       - 8000:8080
+    depends_on:
+      mysql_db:
+        condition: service_healthy
 
   mongo:
     build: ./mongodb
@@ -43,6 +46,10 @@ services:
     secrets:
       - mongo_root_secret
       - mongo_password_secret
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      timeout: 20s
+      retries: 10
     ports:
       - 27017:27017
     volumes:
@@ -68,17 +75,31 @@ services:
       - express_root_secret
       - express_password_secret
     depends_on:
-      mysql_db:
+      mongo:
         condition: service_healthy
 
   stocks:
+    build:
+      context: ./
+      dockerfile: ./stocks/Dockerfile
     image: stock_manager
     container_name: stock_manager
     restart: always
-    build: ./stocks
     depends_on:
       mysql_db:
         condition: service_healthy
+      mongo:
+        condition: service_healthy
+
+  stock_service:
+    build:
+      context: ./
+      dockerfile: ./stock_service/Dockerfile
+    image: stock_service
+    container_name: stock_service
+    restart: always
+    ports:
+      - 8002:8002
 
 secrets:
   mysql_root_pass_secret:

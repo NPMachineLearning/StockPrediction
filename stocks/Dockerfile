@@ -1,11 +1,10 @@
 FROM python:3.9.18-slim
 WORKDIR /stocks
 ADD ./utils utils
-COPY ./stock_processor.py .
-COPY ./requirements.txt .
-COPY ./.env .
-COPY ./run.sh .
-COPY ./stock_cronjob .
+COPY ./stocks/stock_processor.py .
+COPY ./stocks/requirements.txt .
+COPY ./stocks/run.sh .
+COPY ./stocks/stock_cronjob .
 # update container system
 RUN apt-get update
 # install cron
