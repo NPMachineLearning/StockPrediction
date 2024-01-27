@@ -1,9 +1,15 @@
 from pymongo import MongoClient
-from utils.db_env_utils import get_mongo_db_env
+from libs.db_env_utils import get_mongo_db_env
 from urllib.parse import quote_plus
 import uuid
 
-def get_database(database_name=None):   
+def get_database(database_name=None):
+    """
+    Get monog database
+    
+    Args:
+        - `database_name`: `str` database to connect, if None then use default `stock_config`.
+    """   
     env = get_mongo_db_env()
 
     # Create a connection using MongoClient
@@ -14,6 +20,29 @@ def get_database(database_name=None):
 
     # Return database
     return client[env["database"] if database_name is None else database_name]
+
+def get_stock_setting():
+    db  = get_database()
+    collection = db["config"]
+    config = collection.find_one({} ,{'_id': False})
+    db.client.close()
+    return config
+
+def update_stock_setting(operator:str, dict_value):
+    """
+    Update one document in config collection
+    Args:
+     - `operator`: `str` see [here](https://www.mongodb.com/docs/manual/reference/operator/update/)
+     - `dict_value`: `dictionary` field:value mapping where field is key in document or can be operator  
+    """
+    db  = get_database()
+    collection = db["config"]
+    result = collection.update_one({}, {
+        operator:dict_value
+    })
+    count = result.modified_count
+    db.client.close()
+    return count
 
 def test_create_and_drop_collection():
     db = get_database()

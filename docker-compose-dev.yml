@@ -1,7 +1,6 @@
 version: "3.8"
 
 services:
-  # MYSQL database service
   mysql_db:
     image: mysql
     container_name: mysql_db
@@ -25,7 +24,6 @@ services:
       # see volumes below
       - mysql-db-volume:/var/lib/mysql
 
-  # MYSQL admin GUI service for MYSQL database
   adminer:
     image: adminer
     container_name: mysql_db_ui
@@ -36,7 +34,6 @@ services:
       mysql_db:
         condition: service_healthy
 
-  # Mongo database service
   mongo:
     build: ./mongodb
     image: mongo_db
@@ -60,7 +57,6 @@ services:
       - mongo-db-volume:/data/db
       - mongo-db-volume:/data/configdb
 
-  # Mongo admin GUI service for Mongo database
   mongo_express:
     image: mongo-express
     container_name: mongo_db_ui
@@ -82,38 +78,24 @@ services:
       mongo:
         condition: service_healthy
 
-  # Stock manager service
-  stock_manager:
-    build:
-      context: ./
-      dockerfile: ./stock_manager/Dockerfile
-    image: stock_manager
-    container_name: stock_manager
-    restart: always
-    depends_on:
-      mysql_db:
-        condition: service_healthy
-      mongo:
-        condition: service_healthy
+  # stocks:
+  #   build:
+  #     context: ./
+  #     dockerfile: ./stocks/Dockerfile
+  #   image: stock_manager
+  #   container_name: stock_manager
+  #   restart: always
 
-  # Stock backend api service
-  stock_api:
-    build:
-      context: ./
-      dockerfile: ./stock_api/Dockerfile
-    image: stock_api
-    container_name: stock_api
-    restart: always
-    ports:
-      - 8002:8002
-    depends_on:
-      mysql_db:
-        condition: service_healthy
-      mongo:
-        condition: service_healthy
+  # stock_service:
+  #   build:
+  #     context: ./
+  #     dockerfile: ./stock_service/Dockerfile
+  #   image: stock_service
+  #   container_name: stock_service
+  #   restart: always
+  #   ports:
+  #     - 8002:8002
 
-# Sensitive information for services
-# In secrets folder
 secrets:
   mysql_root_pass_secret:
     # copy mysql password to container
@@ -127,7 +109,6 @@ secrets:
   express_password_secret:
     file: ./secret/express_password.txt
 
-# Docker's volumes(storages) for services
 volumes:
   # create a volume for mysql database
   mysql-db-volume:

@@ -3,6 +3,19 @@ from sklearn.ensemble import RandomForestRegressor
 import pandas as pd
 
 def get_stock_data(stock_symbol:str, period="max"):
+    """
+    Get stock data from Yahoo finance by using 
+    [library](https://pypi.org/project/yfinance/)
+
+    Throw RunntimeError if stock not found
+    
+    Args:
+      - `stock_symbol`: `str` see Yahoo finance to find symbol
+        example: Tesla, Inc. (TSLA) the stock symbol is TSLA
+      - `period`: `str` length of data to get refer to library.
+        example: '1d'(1 day), '1mo'(1month)  
+
+    """
     stock = yf.Ticker(stock_symbol)
     stock_data = stock.history(period=period)
     if len(stock_data) == 0:

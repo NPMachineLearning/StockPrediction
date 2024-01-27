@@ -2,7 +2,7 @@ import mysql.connector as dbconnector
 from sqlalchemy import create_engine
 import pandas as pd
 import datetime
-from utils.db_env_utils import get_msql_db_env
+from libs.db_env_utils import get_msql_db_env
 
 def init_db() -> dbconnector.MySQLConnection:
 
