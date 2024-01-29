@@ -9,12 +9,12 @@ import pandas as pd
 from libs.mysql_utils import read_dataframe_from_table, init_db, table_exists
 from libs.mongo_utils import get_stock_setting, update_stock_setting
 from libs.stock_utils import get_stock_data
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class SettingWindow(BaseModel):
     window:int
 class AddStockSymbols(BaseModel):
-    symblos:list
+    stocks:list = Field(examples=['[{"name":"Gold", "symbol":"GC=F"}]'])
 class RemoveSymbols(AddStockSymbols):
     pass
 
@@ -117,19 +117,19 @@ async def update_stock_window(data:SettingWindow):
 async def add_stock_symbols(data:AddStockSymbols):
     try:
         # pre check whether if a stock exists or not in Yahoo finance
-        for stock in data.symblos:
+        for stock in data.stocks:
+            symbol = stock["symbol"]
             try:
-                get_stock_data(stock, "1d")
+                get_stock_data(symbol, "1d")
             except RuntimeError as err:
-                raise HTTPException(status_code=404, detail=f"Stock {stock} not found")
+                raise HTTPException(status_code=404, detail=f"Stock {symbol} not found")
             
         # https://www.mongodb.com/docs/manual/reference/operator/update/each/#definition
-        values = {"stock_symbols": {"$each": data.symblos}}
+        values = {"stocks": {"$each": data.stocks}}
         # https://www.mongodb.com/docs/manual/reference/operator/update/addToSet/
-        updated_count = update_stock_setting("$addToSet", values)
+        update_stock_setting("$addToSet", values)
         config = get_stock_setting()
         return {
-            "updated_count": updated_count,
             "result":config
         }
     except HTTPException as http_err:
@@ -140,12 +140,11 @@ async def add_stock_symbols(data:AddStockSymbols):
 @app.post("/remove_stocks")
 async def remove_stock_symbols(data:RemoveSymbols):
     try:
-        values = {"stock_symbols":  data.symblos}
+        values = {"stocks":  data.stocks}
         # https://www.mongodb.com/docs/manual/reference/operator/update/pullAll/
-        updated_count = update_stock_setting("$pullAll", values)
+        update_stock_setting("$pullAll", values)
         config = get_stock_setting()
         return {
-            "updated_count": updated_count,
             "result":config
         }
     except HTTPException as http_err:

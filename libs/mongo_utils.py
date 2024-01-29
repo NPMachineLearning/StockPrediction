@@ -40,9 +40,7 @@ def update_stock_setting(operator:str, dict_value):
     result = collection.update_one({}, {
         operator:dict_value
     })
-    count = result.modified_count
     db.client.close()
-    return count
 
 def test_create_and_drop_collection():
     db = get_database()
