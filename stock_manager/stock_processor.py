@@ -50,13 +50,14 @@ def run():
     stock_config = get_stock_setting()
     
     # stock that will be processed
-    stocks = stock_config["stock_symbols"]
+    stocks = stock_config["stocks"]
 
     # period of data for training model
     window = stock_config["window"]
 
     # iterate over stocks and do processing
-    for stock_symbol in stocks:
+    for stock in stocks:
+      stock_symbol = stock['symbol']
 
       logging.info(f"----------- Processing {stock_symbol} stock -----------")
 
