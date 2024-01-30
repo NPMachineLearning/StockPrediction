@@ -6,6 +6,7 @@ sys.path.append(os.path.dirname(SCRIPT_DIR))
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 import pandas as pd
+import json
 from libs.mysql_utils import read_dataframe_from_table, init_db, table_exists
 from libs.mongo_utils import get_stock_setting, update_stock_setting
 from libs.stock_utils import get_stock_data
@@ -20,8 +21,23 @@ class RemoveSymbols(AddStockSymbols):
 
 app = FastAPI()
 
-def dataframe_to_json(dataframe:pd.DataFrame):
-    return dataframe.to_json(orient="records", date_format="iso", date_unit="s")
+def dataframe_to_json(dataframe:pd.DataFrame, py_object=True):
+    """
+    Convert pandas dataframe to json
+
+    Args:
+        - `dataframe`: pandas dataframe
+        - `py_object`: True(default) will convert dataframe to python dictionary
+            otherise False as string of Json
+    """
+    json_str = dataframe.to_json(orient="records", date_format="iso", date_unit="s")
+    if json_str:
+        if py_object:
+            return json.loads(json_str)
+        else:
+            return json_str
+    else:
+        raise RuntimeError("Unable to convert dataframe to json string")
 
 def is_stock_exists(stock_symbol:str):
     # check if stock table exists in database
