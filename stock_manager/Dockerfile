@@ -17,6 +17,9 @@ RUN pip3 install -r ./libs/requirements.txt
 # copy main script
 COPY ./stock_manager/stock_processor.py .
 
+# copy config listener script
+COPY ./stock_manager/stock_config_listener.py .
+
 # copy run bash shell script
 COPY ./stock_manager/run.sh .
 
