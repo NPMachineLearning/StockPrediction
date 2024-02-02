@@ -8,7 +8,7 @@ services:
     restart: always
     environment:
       # use secret file for password
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_pass_secret
+      MYSQL_ROOT_PASSWORD: ${MYSQL_DB_PASSWORD}
       MYSQL_DATABASE: stocks
     # stocks service rely on this health check
     healthcheck:
@@ -17,9 +17,9 @@ services:
       retries: 10
     ports:
       - 3306:3306
-    secrets:
-      # see secrets below
-      - mysql_root_pass_secret
+    # secrets:
+    #   # see secrets below
+    #   - mysql_root_pass_secret
     # according to offical data storage
     volumes:
       # see volumes below
@@ -43,12 +43,11 @@ services:
     container_name: mongo_db
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/mongo_root_secret
-      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/mongo_password_secret
-      MONGO_INITDB_DATABASE: stocks
-    secrets:
-      - mongo_root_secret
-      - mongo_password_secret
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_DB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_DB_PASSWORD}
+    # secrets:
+    #   - mongo_root_secret
+    #   - mongo_password_secret
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       timeout: 20s
@@ -70,14 +69,14 @@ services:
     environment:
       ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_USER}
       ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD}
-      ME_CONFIG_MONGODB_ADMINUSERNAME_FILE: /run/secrets/mongo_root_secret
-      ME_CONFIG_MONGODB_ADMINPASSWORD_FILE: /run/secrets/mongo_password_secret
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_DB_USER}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_DB_PASSWORD}
       ME_CONFIG_MONGODB_SERVER: mongo
-    secrets:
-      - mongo_root_secret
-      - mongo_password_secret
-      - express_root_secret
-      - express_password_secret
+    # secrets:
+    #   - mongo_root_secret
+    #   - mongo_password_secret
+    #   - express_root_secret
+    #   - express_password_secret
     depends_on:
       mongo:
         condition: service_healthy
@@ -112,20 +111,20 @@ services:
       mongo:
         condition: service_healthy
 
-# Sensitive information for services
-# In secrets folder
-secrets:
-  mysql_root_pass_secret:
-    # copy mysql password to container
-    file: ./secrets/mysql_root_password.txt
-  mongo_root_secret:
-    file: ./secrets/mongo_root.txt
-  mongo_password_secret:
-    file: ./secrets/mongo_password.txt
-  express_root_secret:
-    file: ./secret/express_root.txt
-  express_password_secret:
-    file: ./secret/express_password.txt
+# # Sensitive information for services
+# # In secrets folder
+# secrets:
+#   mysql_root_pass_secret:
+#     # copy mysql password to container
+#     file: ./secrets/mysql_root_password.txt
+#   mongo_root_secret:
+#     file: ./secrets/mongo_root.txt
+#   mongo_password_secret:
+#     file: ./secrets/mongo_password.txt
+#   express_root_secret:
+#     file: ./secret/express_root.txt
+#   express_password_secret:
+#     file: ./secret/express_password.txt
 
 # Docker's volumes(storages) for services
 volumes:

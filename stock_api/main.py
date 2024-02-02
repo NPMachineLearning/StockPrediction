@@ -1,8 +1,7 @@
 import os
 import sys
-# Add this script to system path in order to access modules from different directory
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.dirname(SCRIPT_DIR))
+# Add root directory to path
+sys.path.insert(1, os.getcwd())
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 import pandas as pd
@@ -105,7 +104,12 @@ async def get_stock_prediction(stock_symbol:str):
 @app.get("/get-stock-config")
 async def get_stock_config():
     try:
+        filter_stocks = []
         config = get_stock_setting()
+        for stock in config["stocks"]:
+            if is_stock_exists(stock["symbol"]):
+                filter_stocks.append(stock)
+        config["stocks"] = filter_stocks
         return {
             "result":config
         }

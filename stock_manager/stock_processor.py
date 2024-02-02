@@ -8,9 +8,8 @@ Original file is located at
 """
 import os
 import sys
-# Add this script to system path in order to access modules from different directory
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.dirname(SCRIPT_DIR))
+# Add root directory to path
+sys.path.insert(1, os.getcwd())
 
 from libs.logging_utils import setup_logging
 import pandas as pd
