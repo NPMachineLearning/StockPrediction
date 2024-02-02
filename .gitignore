@@ -2,4 +2,5 @@
 *.log
 *.env
 /.venv
+**/mongodbkey
 **/__pycache__/
