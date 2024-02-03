@@ -12,4 +12,7 @@ echo "Process stocks"
 
 # run cron at foreground
 echo "Run cron"
-cron -f
+cron
+
+echo "Run config listener"
+/usr/local/bin/python3 stock_config_listener.py

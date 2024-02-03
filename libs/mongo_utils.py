@@ -13,7 +13,7 @@ def get_database(database_name=None):
     env = get_mongo_db_env()
 
     # Create a connection using MongoClient
-    CONNECTION_STRING = "mongodb://%s:%s@%s" % (quote_plus(env["user"]), 
+    CONNECTION_STRING = "mongodb://%s:%s@%s/?replicaSet=rs0" % (quote_plus(env["user"]), 
                                                 quote_plus(env["password"]), 
                                                 env["host"])
     client = MongoClient(CONNECTION_STRING)

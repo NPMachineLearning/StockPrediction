@@ -1,6 +1,7 @@
 /secrets
 *.log
 *.env
+**/mongodbkey
 /.venv
 **/mongodbkey
 **/__pycache__/
