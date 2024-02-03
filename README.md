@@ -8,8 +8,8 @@ The project is docker based and each services are containerized.
 
 1. Make sure [docker](https://www.docker.com/products/docker-desktop/#) is installed.
 2. Download env files template [here](https://drive.google.com/drive/folders/12vQ9ApwkVmEPrRtOjkXxueJ9vpUiXzQ6?usp=sharing).
-3. Move or copy **.env** file `env_template/docker_env/.env` to project's root directory and change value if needed.
-4. Move or copy **.env** file `env_template/libs_env/.env` to project's `libs` folder and change value if needed.
+3. Move or copy **.env** file `docker_env/.env` to project's root directory and change value if needed.
+4. Move or copy **.env** file `libs_env/.env` to project's `libs` folder and change value if needed.
 5. Install [openssl](https://www.openssl.org/source/) if not installed.
 6. Generate a security key for mongodb.
    `openssl rand -base64 741 > [path_to_project]/mongodb/mongodbkey`. Key file name must be **mongodbkey**.
