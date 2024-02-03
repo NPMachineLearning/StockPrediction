@@ -52,6 +52,25 @@ The backend api service running at port 8002 by default.
 To consume api `http://localhost:8002`.
 To see how to use api or what api is avaliable `http://locahost:8002/docs`.
 
+# Libraries
+
+The following python libraries are used in the project.
+
+Make sure they are installed in development environment when doing local machine development.
+
+- mysql_connector_repackaged==0.3.1
+- numpy==1.24.4
+- pandas==2.0.3
+- pymongo==4.6.1
+- python-dotenv==1.0.1
+- scikit_learn==1.3.2
+- SQLAlchemy==2.0.25
+- yfinance==0.2.35
+- fastapi==0.109.0
+- labelImg==1.8.6
+- pandas==2.0.3
+- pydantic==2.6.0
+
 # Project structure
 
 ## Root directory
