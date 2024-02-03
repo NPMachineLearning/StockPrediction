@@ -58,7 +58,7 @@ The following python libraries are used in the project.
 
 Make sure they are installed in development environment when doing local machine development.
 
-- mysql_connector_repackaged==0.3.1
+- mysql-connector-python==0.3.1
 - numpy==1.24.4
 - pandas==2.0.3
 - pymongo==4.6.1
