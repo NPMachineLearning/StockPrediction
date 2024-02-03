@@ -1,6 +1,7 @@
 # Make sure this file is LF for end of line sequence
+# if not it will be convert to LF autmatically
 
-# Make sure this file has a blank line at end of file
+# !! Make sure this file has a blank line at end of file
 
 # Must use absolute path to python interpreter to run python file
 

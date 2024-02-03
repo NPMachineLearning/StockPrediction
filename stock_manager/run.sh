@@ -10,9 +10,10 @@ crontab stock_cronjob.cron
 echo "Process stocks"
 /usr/local/bin/python3 stock_processor.py
 
-# run cron at foreground
+# run cron
 echo "Run cron"
 cron
 
+# start config listener
 echo "Run config listener"
 /usr/local/bin/python3 stock_config_listener.py

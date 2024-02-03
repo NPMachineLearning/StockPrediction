@@ -10,4 +10,6 @@ rs.initiate({
 });
 rs.status();
 "
+
+# ping to see if service is up or not
 mongosh -u $MONGO_INITDB_ROOT_USERNAME -p $MONGO_INITDB_ROOT_PASSWORD --eval "db.adminCommand('ping')"

@@ -7,7 +7,6 @@ services:
     container_name: mysql_db
     restart: always
     environment:
-      # use secret file for password
       MYSQL_ROOT_PASSWORD: ${MYSQL_DB_PASSWORD}
       MYSQL_DATABASE: stocks
     # stocks service rely on this health check
@@ -17,10 +16,6 @@ services:
       retries: 10
     ports:
       - 3306:3306
-    # secrets:
-    #   # see secrets below
-    #   - mysql_root_pass_secret
-    # according to offical data storage
     volumes:
       # see volumes below
       - mysql-db-volume:/var/lib/mysql

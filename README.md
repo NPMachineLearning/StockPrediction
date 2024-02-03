@@ -4,74 +4,122 @@ The purpose of this project is to grab Yahoo's financial stocks' data and then u
 
 The project is docker based and each services are containerized.
 
-# How to start service
+# Run on local machine
 
-1. Make sure docker is installed.
-2. Open terminal and go to project root directory.
-3. Run command `docker-compose up -d` for dettach mode or `docker-compose up` for none dettach mode.
-4. Run command `docker-compose down` if in dettach mode or **control key + C** to exit in none dettach mode.
+1. Make sure [docker](https://www.docker.com/products/docker-desktop/#) is installed.
+2. Download env files template [here](https://drive.google.com/drive/folders/12vQ9ApwkVmEPrRtOjkXxueJ9vpUiXzQ6?usp=sharing).
+3. Move or copy **.env** file `env_template/docker_env/.env` to project's root directory and change value if needed.
+4. Move or copy **.env** file `env_template/libs_env/.env` to project's `libs` folder and change value if needed.
+5. Install [openssl](https://www.openssl.org/source/) if not installed.
+6. Generate a security key for mongodb.
+   `openssl rand -base64 741 > [path_to_project]/mongodb/mongodbkey`. Key file name must be **mongodbkey**.
+7. Open terminal and go to project root directory.
+8. Run command `docker-compose up -d --build` for detach mode or `docker-compose up --build` for none detach mode.
+9. To shutdown services `docker-compose down`.
 
-# Docker services
+# Run development on local machine
 
-Number of services will start when docker-compose is up.
+This will only start database related services. Therefore we can debug or test code in local machine.
 
-- [mysql database](https://hub.docker.com/_/mysql): For storing stock and prediction data.
-- [admine](https://hub.docker.com/_/adminer): User interface for mysql database.
-- [mongo database](https://hub.docker.com/_/mongo): NoSQL database for storing configuration values.
-- [mongo-express](https://hub.docker.com/_/mongo-express): User interface for monogo database.
-- stock_manager: Custom service for processing stock'data and make prediction. In addition to store data into database. This service is running in schedule with cronjob.
+1. Go through steps 1 ~ 7 for **Run on local machine**.
+2. Run command `docker-compose -f docker-compose-dev.yml up -d --build` for detach mode or `docker-compose -f docker-compose-dev.yml up --build` for none detach mode.
+3. 11. To shutdown services `docker-compose -f docker-compose-dev.yml down`.
 
-# File structure
+# Docker containers/services
+
+Number of containers/services will start when docker-compose is up.
+
+- [**mysql database**](https://hub.docker.com/_/mysql): For storing stock and prediction data.
+- [**admine**](https://hub.docker.com/_/adminer): User interface for mysql database.
+- [**mongo database**](https://hub.docker.com/_/mongo): NoSQL database for storing configuration values.
+- [**mongo-express**](https://hub.docker.com/_/mongo-express): User interface for monogo database.
+- **stock_api**: Backend Restful endpoint api.
+- **stock_manager**: Processing stock data and listen for configuration file updated.
+
+# Architecture
+
+![image](https://images.unsplash.com/photo-1706947329131-1aa452641f74?q=80&w=2017&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)
+
+# Database
+
+Two database is used for the project [MySQL](https://www.mysql.com/) and [MongoDB](https://www.mongodb.com/). MySQL(table like) database is used for storing stock and prediction data. In contrast MongoDB(JSON like) is used for storing configuration data which will be used during stock's data processing.
+
+# Backend API
+
+The API provide stock and configuration data.
+The backend api service running at port 8002 by default.
+
+To consume api `http://localhost:8002`.
+To see how to use api or what api is avaliable `http://locahost:8002/docs`.
+
+# Project structure
 
 ## Root directory
 
-- [mongodb/](./stock_predictions/mongodb)
-- [secrets/](./stock_predictions/secrets)
-- [stocks/](./stock_predictions/stocks)
-- [.env](./stock_predictions.env)
-- [.gitignore](./stock_predictions.gitignore)
-- [docker-compose.yml](./stock_predictions/docker-compose.yml)
-- [ReadMe.md](./stock_predictions/ReadMe.md)
+- [libs/](./libs)
+- [mongodb/](./mongodb)
+- [stock_api/](./stock_api)
+- [stock_manager/](./stock_manager)
+- [.gitignore](./.gitignore)
+- [docker-compose-dev.yml](./docker-compose-dev.yml)
+- [docker-compose.yml](./docker-compose.yml)
+- [README.md](./README.md)
 
-* **stock_predictions/**: The project root.
-* **mongodb**: Mongo database for docker.
-* **secrets**: Not in github but [here(private)](https://drive.google.com/drive/folders/16ypKrONqN92Ub2SW16mLsxj5S7-AXb74?usp=drive_link). Contain all docker secrets such as root user or password senstive information.
-* **stocks**: A docker service for processing stock data with cronjob.
-* **.env**: Environment variables for docker. Not in github but [here private](https://drive.google.com/drive/folders/1mVx5V6MY63XcXhwM3f7BMqq2vVz0WKeB?usp=drive_link).
-* **docker-compose.yml**: YAML file for docker compose.
+---
+
+- **libs**: Common libraries
+- **mongodb**: Mongo database for docker.
+- **stock_api**: Backend Restful endpoint api.
+- **stock_manager**: Processing stock data.
+- **docker-compose-dev.yml**: YAML file for docker compose only for development purpose.
+- **docker-compose.yml**: YAML file for docker compose only for production purpose.
+- **README.md**: Documentation.
 
 ## mongodb directory
 
 This database is only for store configurations such as size of window to be used for machine learning to learn to make stock prediction. Store symbol of which stock will be processed.
 
 - [Dockerfile](./mongodb/Dockerfile)
+- [init_rs.sh](./mongodb/init_rs.sh)
 - [init_stock_config.js](./mongodb/init_stock_config.js)
 
-* **Dockerfile**: To build mongodb docker service on top of [mongo docker image](https://hub.docker.com/_/mongo). Doing so is because we want to create a collection with configuration files in database when container started.
-* **init_stock_config.js**: This javascript file will be used and called when mongodb started. And is where we write script to create a collection with files. [How is this work?](https://hub.docker.com/_/mongo) look at section **Initializing a fresh instance**.
+---
 
-## stocks directory
+- **Dockerfile**: To build mongodb docker service on top of [mongo docker image](https://hub.docker.com/_/mongo). Doing so is because we want to create a collection with configuration files in database when container started.
+  In addition we need to setup [replica set](https://www.mongodb.com/docs/manual/replication/).
+- **init_rs.sh**: Bash shell for configure mongodb [replica set](https://www.mongodb.com/docs/manual/replication/).
+- **init_stock_config.js**: This javascript file will be used and called when mongodb started. And is where we write script to create a collection with files. [How is this work?](https://hub.docker.com/_/mongo) look at section **Initializing a fresh instance**.
 
-This is a scheduled service that will run by itself in interval. The main purpose of this service is to download required stock data from Yahoo financial and make stock prediction. In addtion to store data into database.
+## stock_api directory
 
-- [utils/](./stocks/utils)
-  - [db_env_utils.py](./stocks/utils/db_env_utils.py)
-  - [mongo_utils.py](./stocks/utils/mongo_utils.py)
-  - [mysql_utils.py](./stocks/utils/mysql_utils.py)
-  - [stock_utils.py](./stocks/utils/stock_utils.py)
-  - [utils.py](./stocks/utils/utils.py)
-  - [\_\_init\_\_.py](./stocks/utils/__init__.py)
-- [.env](./stocks.env)
-- [Dockerfile](./stocks/Dockerfile)
-- [requirements.txt](./stocks/requirements.txt)
-- [run.sh](./stocks/run.sh)
-- [stock_cronjob](./stocks/stock_cronjob)
-- [stock_processor.py](./stocks/stock_processor.py)
+This is source code of backend Restful API, which act as interface between frontend and backend database. The framework for backend Restful API is [FastAPI](https://fastapi.tiangolo.com/). Furthermore the server is running on [Uvicorn](https://www.uvicorn.org/).
 
-* **Utils**: Folder contain all helper functions that will be used in **stock_processor.py**.
-* **.env**: Environment variables that will be used for connecting to database. Not in github but [here private](https://drive.google.com/drive/folders/1CGb2c82Hi-jSXy8Hi7Up9IDbfrRK0OWc?usp=drive_link).
-* **Dockerfile**: Customzied docker service that build on top of [Python image](https://hub.docker.com/_/python).
-* **requirements.txt**: File that pip will use to install required python modules.
-* **run.sh**: Bash shell to schedule cronjob, run cronjob at foreground and run **stock_processor.py** once.
-* **stock_cronjob**: Base on linux cronjob. A file define the cronjob to be scheduled.
-* **stock_processor.py**: Main script to process downloaded stock data and use machine learning to learn data then make prediction. Finally to write stock and prediction data into database.
+- [Dockerfile](.\stock_api\Dockerfile)
+- [main.py](.\stock_api\main.py)
+- [requirements.txt](.\stock_api\requirements.txt)
+- [run.sh](.\stock_api\run.sh)
+
+---
+
+- **Dockerfile**: Dockerfile that is base on [Python image](https://hub.docker.com/_/python).
+- **main.py**: Restful API.
+- **requirements.txt**: Python pip requirement.txt.
+- **run.sh**: Bash shell for starting backend Restful API.
+
+## stock_manager directory
+
+The heart of project and source code of stock's data processing. It download stock data from Yahoo financial the processing those data and make prediction for 1 day in future for the stock.
+
+- [Dockerfile](.\stock_manager\Dockerfile)
+- [run.sh](.\stock_manager\run.sh)
+- [stock_config_listener.py](.\stock_manager\stock_config_listener.py)
+- [stock_cronjob.cron](.\stock_manager\stock_cronjob.cron)
+- [stock_processor.py](.\stock_manager\stock_processor.py)
+
+---
+
+- **Dockerfile**: Dockerfile that is base on [Python image](https://hub.docker.com/_/python).
+- **run.sh**: Bash shell to schedule and run cronjob.
+- **stock_config_listener.py**: A listener who listen to mongo database changed event then run **stock_processor.py**. This file listen to confiuration file changed in mongo database constantly.
+- **stock_cronjob**: A file define the cronjob to be scheduled for linux.
+- **stock_processor.py**: Main script to process downloaded stock data and use machine learning to learn and make prediction. Finally to write stock and prediction data into database.
