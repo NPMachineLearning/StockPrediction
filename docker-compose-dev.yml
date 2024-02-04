@@ -33,7 +33,9 @@ services:
 
   # Mongo database service
   mongo:
-    build: ./mongodb
+    build: 
+      context: ./
+      dockerfile: ./mongodb/Dockerfile
     image: mongo_db
     container_name: mongo_db
     restart: always

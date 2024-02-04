@@ -58,7 +58,7 @@ The following python libraries are used in the project.
 
 Make sure they are installed in development environment when doing local machine development.
 
-- mysql-connector-python==0.3.1
+- mysql_connector_python==8.3.0
 - numpy==1.24.4
 - pandas==2.0.3
 - pymongo==4.6.1
@@ -68,8 +68,8 @@ Make sure they are installed in development environment when doing local machine
 - yfinance==0.2.35
 - fastapi==0.109.0
 - labelImg==1.8.6
-- pandas==2.0.3
 - pydantic==2.6.0
+- uvicorn==0.27.0
 
 # Project structure
 
