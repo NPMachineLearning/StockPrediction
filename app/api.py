@@ -18,3 +18,7 @@ def get_stocks():
 def get_stock_data(stock_symbol):
     res = requests.get(urljoin(SERVER, f"get-stock/{stock_symbol}"))
     return res.json()["result"]
+
+def get_stock_prediction(stock_symbol):
+    res = requests.get(urljoin(SERVER, f"get-stock-prediction/{stock_symbol}"))
+    return res.json()["result"]
