@@ -123,7 +123,7 @@ Make sure they are installed in development environment when doing local machine
   - [config.py](./app/pages/config.py)
 - [api.py](./app/api.py)
 - [app.py](./app/app.py)
-- [requirements.txt](.\app\requirements.txt)
+- [requirements.txt](./app/requirements.txt)
 
 ---
 
@@ -151,10 +151,10 @@ This database is only for store configurations such as size of window to be used
 
 This is source code of backend Restful API, which act as interface between frontend and backend database. The framework for backend Restful API is [FastAPI](https://fastapi.tiangolo.com/). Furthermore the server is running on [Uvicorn](https://www.uvicorn.org/).
 
-- [Dockerfile](.\stock_api\Dockerfile)
-- [main.py](.\stock_api\main.py)
-- [requirements.txt](.\stock_api\requirements.txt)
-- [run.sh](.\stock_api\run.sh)
+- [Dockerfile](./stock_api/Dockerfile)
+- [main.py](./stock_api/main.py)
+- [requirements.txt](./stock_api/requirements.txt)
+- [run.sh](./stock_api/run.sh)
 
 ---
 
@@ -167,11 +167,11 @@ This is source code of backend Restful API, which act as interface between front
 
 The heart of project and source code of stock's data processing. It download stock data from Yahoo financial the processing those data and make prediction for 1 day in future for the stock.
 
-- [Dockerfile](.\stock_manager\Dockerfile)
-- [run.sh](.\stock_manager\run.sh)
-- [stock_config_listener.py](.\stock_manager\stock_config_listener.py)
-- [stock_cronjob.cron](.\stock_manager\stock_cronjob.cron)
-- [stock_processor.py](.\stock_manager\stock_processor.py)
+- [Dockerfile](./stock_manager/Dockerfile)
+- [run.sh](./stock_manager/run.sh)
+- [stock_config_listener.py](./stock_manager/stock_config_listener.py)
+- [stock_cronjob.cron](./stock_manager/stock_cronjob.cron)
+- [stock_processor.py](./stock_manager/stock_processor.py)
 
 ---
 
