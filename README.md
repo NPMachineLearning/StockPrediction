@@ -4,7 +4,21 @@ The purpose of this project is to grab Yahoo's financial stocks' data and then u
 
 The project is docker based and each services are containerized.
 
+# Note
+
+**Instruction are using forward slash(\/). However in window command line need to be replaced with backward slash(\\)**
+
 # Run on local machine
+
+## Setup environment
+
+1. Make your have python installed.
+2. Install [virtualenv](https://virtualenv.pypa.io/en/latest/installation.html).
+3. Create an environment [see here](https://virtualenv.pypa.io/en/latest/user_guide.html). For example `virtualenv .venv`.
+4. Activate environment [see here](https://virtualenv.pypa.io/en/latest/user_guide.html). For example in Powershell `./.venv/scripts/activate`.
+5. Install packages with command `pip install -r ./app/requirements.txt`
+
+## Run docker services
 
 1. Make sure [docker](https://www.docker.com/products/docker-desktop/#) is installed.
 2. Download env files template [here](https://drive.google.com/drive/folders/12vQ9ApwkVmEPrRtOjkXxueJ9vpUiXzQ6?usp=sharing).
@@ -17,9 +31,14 @@ The project is docker based and each services are containerized.
 8. Run command `docker-compose up -d --build` for detach mode or `docker-compose up --build` for none detach mode.
 9. To shutdown services `docker-compose down`.
 
-# Run development on local machine
+## Run frontend web app
 
-This will only start database related services. Therefore we can debug or test code in local machine.
+1. Run command `streamlit run ./app/app.py`.
+2. Go to `http://http://localhost:8501`.
+
+# Development on local machine
+
+This will **only** start database related services. Therefore we can write, debug or test code in local machine.
 
 1. Go through steps 1 ~ 7 for **Run on local machine**.
 2. Run command `docker-compose -f docker-compose-dev.yml up -d --build` for detach mode or `docker-compose -f docker-compose-dev.yml up --build` for none detach mode.
@@ -75,6 +94,7 @@ Make sure they are installed in development environment when doing local machine
 
 ## Root directory
 
+- [app/](./app)
 - [libs/](./libs)
 - [mongodb/](./mongodb)
 - [stock_api/](./stock_api)
@@ -86,6 +106,7 @@ Make sure they are installed in development environment when doing local machine
 
 ---
 
+- **app**: Frontend web app
 - **libs**: Common libraries
 - **mongodb**: Mongo database for docker.
 - **stock_api**: Backend Restful endpoint api.
@@ -93,6 +114,23 @@ Make sure they are installed in development environment when doing local machine
 - **docker-compose-dev.yml**: YAML file for docker compose only for development purpose.
 - **docker-compose.yml**: YAML file for docker compose only for production purpose.
 - **README.md**: Documentation.
+
+## app
+
+---
+
+- [pages/](./app/pages)
+  - [config.py](./app/pages/config.py)
+- [api.py](./app/api.py)
+- [app.py](./app/app.py)
+- [requirements.txt](.\app\requirements.txt)
+
+---
+
+**config.py**: Web page to manage stock such as add a new stock, remove a stock.
+**api.py**: An utility for frontend web app to communicate with backend restful api service.
+**app.py**: Main frontend web app/main page.
+**requirements.txt**: python pip requirements.txt.
 
 ## mongodb directory
 
