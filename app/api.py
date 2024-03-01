@@ -22,3 +22,23 @@ def get_stock_data(stock_symbol):
 def get_stock_prediction(stock_symbol):
     res = requests.get(urljoin(SERVER, f"get-stock-prediction/{stock_symbol}"))
     return res.json()["result"]
+
+def add_stock(stock_name, stock_symbol):
+    res = requests.post(urljoin(SERVER, "add_stocks/"), 
+                        json={"stocks":[{"name":stock_name, "symbol":stock_symbol}]})
+    if res.status_code == 200:
+        return res.json()["result"]
+    elif res.status_code == 404:
+        msg = res.json()["detail"]
+        raise Exception(f"{msg}")
+    else:
+        raise Exception("Something went wrong!!")
+
+def remove_stock(stock_name, stock_symbol):
+    res = requests.post(urljoin(SERVER, "remove_stocks/"), 
+                        json={"stocks":[{"name":stock_name, "symbol":stock_symbol}]})
+    if res.status_code == 200:
+        return res.json()["result"]
+    else:
+        raise Exception("Something went wrong!!")
+    

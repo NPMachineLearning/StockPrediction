@@ -2,8 +2,14 @@ import streamlit as st
 import api
 import plotly.graph_objects as go
 import pandas as pd
+from datetime import datetime
 
 st.title("Stock Prediction")
+
+if st.button("Manage Stock", 
+             help="Add a new stock, Remove a stock",
+             type="primary"):
+    st.switch_page("./pages/config.py")
 
 # get all stocks information
 stocks = api.get_stocks()
@@ -43,7 +49,6 @@ graph_option = st.selectbox("Select a graph",
                              "Line",
                              "OHLC",
                              "Bar"])
-
 # get selected stock data
 stock_data = api.get_stock_data(selected_stock_symbol)
 
@@ -55,13 +60,18 @@ stock_prediction = api.get_stock_prediction(selected_stock_symbol)
 pred_df = pd.DataFrame(stock_prediction)
 # st.write(pred_df)
 
+# Prediction date and price
+pred_date = pred_df.iloc[-1]["Date"]
+pred_date = datetime.fromisoformat(pred_date).strftime("%Y %B %d")
+pred_price = pred_df.iloc[-1]["Prediction"]
+pred_price = round(pred_price, 2)
+
+st.markdown(f"""🔮 The prediction price for :red[**{stock_option}**] 
+            on date :red[**{pred_date}**] is :red[**${pred_price}USD**]""")
+
 # create figure with plotly
-# fig = go.Figure(data=[go.Candlestick(x=df['Date'],
-#                 open=df['Open'], high=df['High'],
-#                 low=df['Low'], close=df['Close'])
-#                      ])
 fig = go.Figure(data=[get_financial_data_graph(graph_type=graph_option, df=stock_df, stock_name=stock_option),
-                     go.Line(x=pred_df["Date"], y=pred_df["Prediction"], 
+                     go.Scatter(x=pred_df["Date"], y=pred_df["Prediction"], 
                              showlegend=True, name="Prediction")],
                      layout=go.Layout(autosize=True, 
                                       hovermode="x", 
