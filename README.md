@@ -78,7 +78,7 @@ This will **only** start database related services. Therefore we can write, debu
    - `pip install -r ./app/requirements.txt`
    - `pip install -r ./docker/libs/requirements.txt`
    - `pip install -r ./docker/stock_api/requirements.txt`
-2. Go through steps 1~4 in **Setup environment** to setup environment and 1~8 in **Run docker services** to start docker services.
+2. Go through steps 1 ~ 4 in **Setup environment** to setup environment and 1 ~ 8 in **Run docker services** to start docker services.
 3. Run command `docker-compose -f docker-compose-dev.yml up -d --build` for detach mode or `docker-compose -f docker-compose-dev.yml up --build` for none detach mode.
 4. At this point your are able to write code, debug, test and connect to database.
 5. To shutdown services `docker-compose -f docker-compose-dev.yml down`.
