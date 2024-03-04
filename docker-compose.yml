@@ -34,7 +34,7 @@ services:
   # Mongo database service
   mongo:
     build:
-      context: ./
+      context: ./docker
       dockerfile: ./mongodb/Dockerfile
     image: mongo_db
     container_name: mongo_db
@@ -86,7 +86,7 @@ services:
   # Stock manager service
   stock_manager:
     build:
-      context: ./
+      context: ./docker
       dockerfile: ./stock_manager/Dockerfile
     image: stock_manager
     container_name: stock_manager
@@ -100,7 +100,7 @@ services:
   # Stock backend api service
   stock_api:
     build:
-      context: ./
+      context: ./docker
       dockerfile: ./stock_api/Dockerfile
     image: stock_api
     container_name: stock_api

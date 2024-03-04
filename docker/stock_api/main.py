@@ -1,7 +1,8 @@
 import os
 import sys
-# Add root directory to path
-sys.path.insert(1, os.getcwd())
+# Add docker directory to path
+sys.path.insert(1, os.path.join(os.getcwd(), "docker"))
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 import pandas as pd

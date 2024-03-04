@@ -1,3 +1,5 @@
+[TOC]
+
 # Stock Prediction
 
 The purpose of this project is to grab Yahoo's financial stocks' data and then use meachine learning to make prediction for stocks. Store stock data and prediction in database.
@@ -31,20 +33,61 @@ The project is docker based and each services are containerized.
 8. Run command `docker-compose up -d --build` for detach mode or `docker-compose up --build` for none detach mode.
 9. To shutdown services `docker-compose down`.
 
-## Run frontend web app
+## Run web app
+
+The project provide a web app for end user as a demo.
+
+To run demo:
 
 1. Run command `streamlit run ./app/app.py`.
 2. Go to `http://http://localhost:8501`.
+
+## Note
+
+### To change mysql password
+
+Go to `.env` file at `./.env`
+
+- Change password for **MYSQL_DB_PASSWORD**
+
+### To change mongodb user and password
+
+Go to `.env` file at `./.env`
+
+#### mongodb
+
+- Change user for **MONGO_DB_USER**
+- Change password for **MONGO_DB_PASSWORD**
+
+#### mongo-express(UI)
+
+- Change user for **MONGO_EXPRESS_USER**
+- Change password for **MONGO_EXPRESS_PASSWORD**
+
+### For local development
+
+Docker container might use libraries from `./docker/libs` and libraries use defined setting for connecting database. Values in setting are defined in `.env` file located at `./docker/libs/.env`
 
 # Development on local machine
 
 This will **only** start database related services. Therefore we can write, debug or test code in local machine.
 
-1. Go through steps 1 ~ 7 for **Run on local machine**.
-2. Run command `docker-compose -f docker-compose-dev.yml up -d --build` for detach mode or `docker-compose -f docker-compose-dev.yml up --build` for none detach mode.
-3. 11. To shutdown services `docker-compose -f docker-compose-dev.yml down`.
+**Note**: Make sure to change value to **localhost** for **_MYSQL_HOST_** and **_MONGO_HOST_** in `.env` file located in `./docker/libs/.env`
 
-# Docker containers/services
+1. Install packages from **_requirements.txt_**
+   - `pip install -r ./app/requirements.txt`
+   - `pip install -r ./docker/libs/requirements.txt`
+   - `pip install -r ./docker/stock_api/requirements.txt`
+2. Go through steps 1 ~ 7 for **Run on local machine**.
+3. Run command `docker-compose -f docker-compose-dev.yml up -d --build` for detach mode or `docker-compose -f docker-compose-dev.yml up --build` for none detach mode.
+4. At this point your are able to write code, debug, test and connect to database.
+5. To shutdown services `docker-compose -f docker-compose-dev.yml down`.
+
+# Architecture
+
+![image](https://images.unsplash.com/photo-1706947329131-1aa452641f74?q=80&w=2017&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)
+
+## All docker containers/services
 
 Number of containers/services will start when docker-compose is up.
 
@@ -55,50 +98,48 @@ Number of containers/services will start when docker-compose is up.
 - **stock_api**: Backend Restful endpoint api.
 - **stock_manager**: Processing stock data and listen for configuration file updated.
 
-# Architecture
-
-![image](https://images.unsplash.com/photo-1706947329131-1aa452641f74?q=80&w=2017&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)
-
-# Database
+## Database (Docker container)
 
 Two database is used for the project [MySQL](https://www.mysql.com/) and [MongoDB](https://www.mongodb.com/). MySQL(table like) database is used for storing stock and prediction data. In contrast MongoDB(JSON like) is used for storing configuration data which will be used during stock's data processing.
 
-# Backend API
+## Database admin tool (Docker container)
 
-The API provide stock and configuration data.
+In order to manage database visually, the project employed [**admine**](https://hub.docker.com/_/adminer) for **MySQL** and [**mongo-express**](https://hub.docker.com/_/mongo-express) for **MongoDB**.
+
+## Stock API (Docker container)
+
+Main purpose is to provide endpoint restful API. Therefore any clients can use this endpoint API.
+
+Framework use [FastAPI](https://fastapi.tiangolo.com/).
+
+The API provide stock data and configuration.
 The backend api service running at port 8002 by default.
 
 To consume api `http://localhost:8002`.
 To see how to use api or what api is avaliable `http://locahost:8002/docs`.
 
-# Libraries
+## Stock Manager (Docker container)
 
-The following python libraries are used in the project.
+Main purpose is to **processing stock data**, **train model from stock data**, **make stock prediction**, **write data into database**.
 
-Make sure they are installed in development environment when doing local machine development.
+In addition, entire procedure is scheduled to be run everyday with cornjob.
 
-- mysql_connector_python==8.3.0
-- numpy==1.24.4
-- pandas==2.0.3
-- pymongo==4.6.1
-- python-dotenv==1.0.1
-- scikit_learn==1.3.2
-- SQLAlchemy==2.0.25
-- yfinance==0.2.35
-- fastapi==0.109.0
-- labelImg==1.8.6
-- pydantic==2.6.0
-- uvicorn==0.27.0
+Whenever configuration/setting updated then entire procedure will run again in order to achieve up to date stock data.
+
+## Web app (Not docker container)
+
+This is not part of docker container service. This is a demo for how to use **Stock API**.
 
 # Project structure
 
 ## Root directory
 
 - [app/](./app)
-- [libs/](./libs)
-- [mongodb/](./mongodb)
-- [stock_api/](./stock_api)
-- [stock_manager/](./stock_manager)
+- [docker/](./docker)
+  - [libs/](./docker/libs)
+  - [mongodb/](./docker/mongodb)
+  - [stock_api/](./docker/stock_api)
+  - [stock_manager/](./docker/stock_manager)
 - [.gitignore](./.gitignore)
 - [docker-compose-dev.yml](./docker-compose-dev.yml)
 - [docker-compose.yml](./docker-compose.yml)
@@ -108,16 +149,14 @@ Make sure they are installed in development environment when doing local machine
 
 - **app**: Frontend web app
 - **libs**: Common libraries
-- **mongodb**: Mongo database for docker.
-- **stock_api**: Backend Restful endpoint api.
-- **stock_manager**: Processing stock data.
+- **mongodb**: Docker container for Mongo database.
+- **stock_api**: Docker container for backend Restful endpoint api.
+- **stock_manager**: Docker container for processing stock data.
 - **docker-compose-dev.yml**: YAML file for docker compose only for development purpose.
 - **docker-compose.yml**: YAML file for docker compose only for production purpose.
 - **README.md**: Documentation.
 
-## app
-
----
+## app directory
 
 - [pages/](./app/pages)
   - [config.py](./app/pages/config.py)
@@ -132,13 +171,17 @@ Make sure they are installed in development environment when doing local machine
 **app.py**: Main frontend web app/main page.
 **requirements.txt**: python pip requirements.txt.
 
+## libs directory
+
+A set of handful libraries to be used by docker services such as **stock_api**, **stock_mananger**. Libraries need to connect to database in order to work. Therefore `.env` file is where it defiend all setting.
+
 ## mongodb directory
 
 This database is only for store configurations such as size of window to be used for machine learning to learn to make stock prediction. Store symbol of which stock will be processed.
 
-- [Dockerfile](./mongodb/Dockerfile)
-- [init_rs.sh](./mongodb/init_rs.sh)
-- [init_stock_config.js](./mongodb/init_stock_config.js)
+- [Dockerfile](./docker/mongodb/Dockerfile)
+- [init_rs.sh](./docker/mongodb/init_rs.sh)
+- [init_stock_config.js](./docker/mongodb/init_stock_config.js)
 
 ---
 
@@ -151,10 +194,10 @@ This database is only for store configurations such as size of window to be used
 
 This is source code of backend Restful API, which act as interface between frontend and backend database. The framework for backend Restful API is [FastAPI](https://fastapi.tiangolo.com/). Furthermore the server is running on [Uvicorn](https://www.uvicorn.org/).
 
-- [Dockerfile](./stock_api/Dockerfile)
-- [main.py](./stock_api/main.py)
-- [requirements.txt](./stock_api/requirements.txt)
-- [run.sh](./stock_api/run.sh)
+- [Dockerfile](./docker/stock_api/Dockerfile)
+- [main.py](./docker/stock_api/main.py)
+- [requirements.txt](./docker/stock_api/requirements.txt)
+- [run.sh](./docker/stock_api/run.sh)
 
 ---
 
@@ -167,11 +210,11 @@ This is source code of backend Restful API, which act as interface between front
 
 The heart of project and source code of stock's data processing. It download stock data from Yahoo financial the processing those data and make prediction for 1 day in future for the stock.
 
-- [Dockerfile](./stock_manager/Dockerfile)
-- [run.sh](./stock_manager/run.sh)
-- [stock_config_listener.py](./stock_manager/stock_config_listener.py)
-- [stock_cronjob.cron](./stock_manager/stock_cronjob.cron)
-- [stock_processor.py](./stock_manager/stock_processor.py)
+- [Dockerfile](./docker/stock_manager/Dockerfile)
+- [run.sh](./docker/stock_manager/run.sh)
+- [stock_config_listener.py](./docker/stock_manager/stock_config_listener.py)
+- [stock_cronjob.cron](./docker/stock_manager/stock_cronjob.cron)
+- [stock_processor.py](./docker/stock_manager/stock_processor.py)
 
 ---
 

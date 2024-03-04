@@ -8,8 +8,8 @@ Original file is located at
 """
 import os
 import sys
-# Add root directory to path
-sys.path.insert(1, os.getcwd())
+# Add docker directory to path
+sys.path.insert(1, os.path.join(os.getcwd(), "docker"))
 
 from libs.logging_utils import get_logger, close_logger, clean_log
 import pandas as pd
