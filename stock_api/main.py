@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 import pandas as pd
 import json
 from libs.mysql_utils import read_dataframe_from_table, init_db, table_exists
-from libs.mongo_utils import get_stock_setting, update_stock_setting
+from libs.mongo_utils import get_stock_setting, update_stock_setting, get_stock_currency
 from libs.stock_utils import get_stock_data
 from pydantic import BaseModel, Field
 
@@ -59,7 +59,20 @@ def check_stock_exists(stock_symbol:str):
 async def root():
     return {"message": "Hello stock service with fastapi"}
 
-@app.get("/get-stock/{stock_symbol}")
+@app.get("/get_stock_currency/{stock_symbol}")
+async def get_stock(stock_symbol:str):
+    try:
+        currency = get_stock_currency(stock_symbol)
+        if currency:
+            return {"result":currency}
+        else:
+            raise Exception(f"No currency for symbol {stock_symbol}")
+    except HTTPException as http_err:
+        raise http_err
+    except Exception as err:
+        return JSONResponse(status_code=500, content={"error": err})
+
+@app.get("/get_stock/{stock_symbol}")
 async def get_stock(stock_symbol:str):
     try:
         check_stock_exists(stock_symbol)
@@ -82,7 +95,7 @@ async def get_stock(stock_symbol:str):
     except Exception as err:
         return JSONResponse(status_code=500, content={"error": err})
 
-@app.get("/get-stock-prediction/{stock_symbol}")
+@app.get("/get_stock_prediction/{stock_symbol}")
 async def get_stock_prediction(stock_symbol:str):
     try:
         check_stock_exists(stock_symbol)
@@ -101,7 +114,7 @@ async def get_stock_prediction(stock_symbol:str):
     except Exception as err:
         return JSONResponse(status_code=500, content={"error": err})
 
-@app.get("/get-stock-config")
+@app.get("/get_stock_config")
 async def get_stock_config():
     try:
         filter_stocks = []

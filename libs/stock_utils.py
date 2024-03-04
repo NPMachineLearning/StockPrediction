@@ -23,6 +23,10 @@ def get_stock_data(stock_symbol:str, period="max"):
 
     return stock_data
 
+def get_stock_info(stock_symbol:str):
+   stock = yf.Ticker(stock_symbol)
+   return stock.info
+
 def convert_to_date(datetime):
   return pd.to_datetime(datetime).date
 

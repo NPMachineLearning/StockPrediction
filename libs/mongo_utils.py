@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from libs.db_env_utils import get_mongo_db_env
+from .db_env_utils import get_mongo_db_env
 from urllib.parse import quote_plus
 import uuid
 
@@ -42,6 +42,25 @@ def update_stock_setting(operator:str, dict_value):
     })
     db.client.close()
 
+def update_stock_currency(symbol:str, currency:str):
+    db  = get_database()
+    collection = db["currency"]
+    doc = collection.find_one({"symbol":symbol})
+    if doc:
+        result = collection.update_one({"symbol":symbol}, {
+            "$set":{"currency":currency}
+        })
+    else:
+        result = collection.insert_one({"symbol":symbol, "currency":currency})
+    db.client.close()
+
+def get_stock_currency(symbol:str):
+    db  = get_database()
+    collection = db["currency"]
+    doc = collection.find_one({"symbol":symbol}, {'_id': False})
+    db.client.close()
+    return doc
+
 def test_create_and_drop_collection():
     db = get_database()
     collection_name = 'a_collection_test'
@@ -71,8 +90,25 @@ def test_insert_and_find():
     finally:
         db[collection_name].drop()
         db.client.close()
+
+def test_set_get_currency():
+    try:
+        update_stock_currency(symbol="GC=F", currency="USD")
+        stock_currency = get_stock_currency("GC=F")
+        assert stock_currency["symbol"]=="GC=F" and stock_currency["currency"]=="USD", "update currency CG=F fail"
+
+        update_stock_currency(symbol="GC=J", currency="JPN")
+        stock_currency = get_stock_currency("GC=J")
+        assert stock_currency["symbol"]=="GC=J" and stock_currency["currency"]=="JPN", "update currency CG=F fail" 
+
+    finally:
+        db = get_database()
+        db["currency"].drop()
+        db.client.close()
+
     
 if __name__ == "__main__":
     test_create_and_drop_collection()   
     test_insert_and_find()
+    test_set_get_currency()
     

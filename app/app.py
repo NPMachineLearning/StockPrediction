@@ -66,8 +66,11 @@ pred_date = datetime.fromisoformat(pred_date).strftime("%Y %B %d")
 pred_price = pred_df.iloc[-1]["Prediction"]
 pred_price = round(pred_price, 2)
 
+# Get stock currency
+stock_currency = api.get_stock_currency(selected_stock_symbol)
+
 st.markdown(f"""🔮 The prediction price for :red[**{stock_option}**] 
-            on date :red[**{pred_date}**] is :red[**${pred_price}USD**]""")
+            on date :red[**{pred_date}**] is :red[**${pred_price}{stock_currency}**]""")
 
 # create figure with plotly
 fig = go.Figure(data=[get_financial_data_graph(graph_type=graph_option, df=stock_df, stock_name=stock_option),
@@ -105,7 +108,7 @@ fig = go.Figure(data=[get_financial_data_graph(graph_type=graph_option, df=stock
                                                        dict(step="all")
                                                   ])
                                              )},
-                                      yaxis={"title":"Price($USD)"},
+                                      yaxis={"title":f"Price(${stock_currency})"},
                                       title=f"{stock_option} data and prediction"))
 
 # show stock data

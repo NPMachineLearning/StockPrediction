@@ -14,9 +14,9 @@ sys.path.insert(1, os.getcwd())
 from libs.logging_utils import get_logger, close_logger, clean_log
 import pandas as pd
 import numpy as np
-from libs.stock_utils import train_model, prepare_data_for_training, download_stock
+from libs.stock_utils import train_model, prepare_data_for_training, download_stock, get_stock_info
 from libs.mysql_utils import create_table_from_dataframe
-from libs.mongo_utils import get_stock_setting
+from libs.mongo_utils import get_stock_setting, update_stock_currency
 import time
 import datetime
 
@@ -72,6 +72,13 @@ def run():
       # logging.info(f"Writting data into database .....")
       # create_table_from_dataframe(stock_data_df, stock_symbol)
       # logging.info(f"Writting data into database completed")
+
+      ## update stock information
+      info_logger.info("Writting stock info ....")
+      stock_info = get_stock_info(stock_symbol)
+      currency = stock_info["currency"]
+      update_stock_currency(stock_symbol, currency)
+      info_logger.info("Writting stock info completed")
       
       ## Prepare data for training model
       info_logger.info(f"Prepare stock data for model training")
